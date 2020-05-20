@@ -1,0 +1,190 @@
+=== NPC preferences ===
+{|class="terraria lined" width=100%
+|-
+! rowspan="2" |<small>NPC</small>!! colspan="2" |<small>Biome preference</small>
+! colspan="4" |<small>Neighbor preference</small>
+|-
+!<small>Likes/Loves</small>
+!<small>Dislikes/Hates</small>
+!<small>Loves</small>
+!<small>Likes</small>
+!<small>Dislikes</small>
+!<small>Hates</small>
+|-
+|<small>{{item|Guide|class=mirror}}</small>||<small>Likes Forest</small>
+|<small>Dislikes Ocean</small>
+|<small>None</small>
+|<small>{{item|Clothier|class=mirror}}
+{{item|Zoologist|class=mirror}}</small>
+|<small>{{item|Steampunker|class=mirror}}</small>
+|<small>{{item|Painter|class=mirror}}</small>
+|-
+|<small>{{item|Merchant|class=mirror}}</small>||<small>Likes Forest</small>
+|<small>Dislikes Desert</small>
+|<small>None</small>
+|<small>{{item|Golfer|class=mirror}}</small>
+<small>{{item|Nurse|class=mirror}}</small>
+|<small>{{item|Tax Collector|class=mirror}}</small>                                              
+|<small>{{item|Angler|class=mirror}}</small>  
+|-
+|<small>{{item|Zoologist|class=mirror}}</small>  ||<small>Likes Forest</small>
+|<small>Dislikes Desert</small>
+|<small>{{item|Witch Doctor|class=mirror}}</small>
+|<small>{{item|Golfer|class=mirror}}</small> 
+|<small>{{item|Angler|class=mirror}}</small>
+|<small>{{item|Arms Dealer|class=mirror}}</small>          
+|-
+|<small>{{item|Golfer|class=mirror}}</small>  ||<small>Likes Forest</small>
+|<small>Dislikes Underground</small>
+|<small>{{item|Angler|class=mirror}}</small>
+|<small>{{item|Painter|class=mirror}}{{item|Zoologist|class=mirror}}</small> 
+|<small>{{item|Pirate|class=mirror}}</small>
+|<small>{{item|Merchant|class=mirror}}</small>                               
+|-
+|<small>{{item|Nurse|class=mirror}}</small>||<small>Likes Hallow</small>
+|<small>Dislikes Snow</small>
+|<small>{{item|Arms Dealer|class=mirror}}</small>
+|<small>{{item|Wizard|class=mirror}}</small>
+|<small>{{item|Dryad|class=mirror}} {{item|Party Girl|class=mirror}}</small>
+|<small>{{item|Zoologist|class=mirror}}</small> 
+|-
+|<small>{{item|Tavernkeep|class=mirror}}</small>||<small>Likes Hallow</small>
+|<small>Dislikes Snow</small>
+|<small>{{item|Demolitionist|class=mirror}}</small>
+|<small>{{item|Goblin Tinkerer|class=mirror}}</small>
+|<small>{{item|Guide|class=mirror}}</small>
+|<small>{{item|Dye Trader|class=mirror}}</small>
+|-
+|<small>{{item|Party Girl|class=mirror}}</small>||<small>Likes Hallow</small> 
+|<small>Dislikes Underground</small>
+|<small>{{item|Wizard|class=mirror}}</small>
+|<small>{{item|Stylist|class=mirror}}</small>
+|<small>{{item|Merchant|class=mirror}}</small>
+|<small>{{item|Tax Collector|class=mirror}}</small>
+|-
+|<small>{{item|Wizard|class=mirror}}</small>||<small>Likes Hallow</small>
+|<small>Dislikes Ocean</small>
+|<small>{{item|Golfer|class=mirror}}</small> 
+|<small>{{item|Merchant|class=mirror}}</small>
+|<small>{{item|Witch Doctor|class=mirror}}</small>
+|<small>{{item|Cyborg|class=mirror}}</small>
+|-
+|<small>{{item|Demolitionist|class=mirror}}</small>||<small>Likes Underground</small>
+|<small>Dislikes Ocean</small>
+|<small>{{item|Tavernkeep|class=mirror}}</small>
+|<small>{{item|Mechanic|class=mirror}}</small>
+|<small>{{item|Arms Dealer|class=mirror}} {{item|Goblin Tinkerer|class=mirror}}</small>
+|<small>None</small>
+|-
+|<small>{{item|Goblin Tinkerer|class=mirror}}</small>||<small>Likes Underground</small>
+|<small>Dislikes Jungle</small>
+|<small>{{item|Mechanic|class=mirror}}</small>
+|<small>{{item|Dye Trader|class=mirror}}</small>
+|<small>{{item|Clothier|class=mirror}}</small>
+|<small>{{item|Stylist|class=mirror}}</small>
+|-
+|<small>{{item|Clothier|class=mirror}}</small>||<small>Likes Underground</small>
+|<small>Dislikes Hallow</small>
+|<small>{{item|Truffle|class=mirror}}</small>
+|<small>{{item|Tax Collector|class=mirror}}</small>
+|<small>{{item|Nurse|class=mirror}}</small>
+|<small>{{item|Mechanic|class=mirror}}</small>
+|-
+|<small>{{item|Dye Trader|class=mirror}}</small>||<small>Likes Desert</small>
+|<small>Dislikes Forest</small>
+|<small>None</small>
+|<small>{{item|Arms Dealer|class=mirror}} {{item|Painter|class=mirror}}</small>
+|<small>{{item|Steampunker|class=mirror}}</small>
+|<small>{{item|Pirate|class=mirror}}</small>
+|-
+|<small>{{item|Arms Dealer|class=mirror}}</small>||<small>Likes Desert</small>
+|<small>Dislikes Snow</small>
+|<small>{{item|Nurse|class=mirror}}</small>
+|<small>{{item|Steampunker|class=mirror}}</small>
+|<small>{{item|Golfer|class=mirror}}</small> 
+|<small>{{item|Demolitionist|class=mirror}}</small>
+|-
+|<small>{{item|Steampunker|class=mirror}}</small>||<small>Likes Desert</small>
+|<small>Dislikes Jungle</small>
+|<small>{{item|Cyborg|class=mirror}}</small>
+|<small>{{item|Painter|class=mirror}}</small>
+|<small>{{item|Dryad|class=mirror}} {{item|Wizard|class=mirror}} {{item|Party Girl|class=mirror}}</small>
+|<small>None</small>
+|-
+|<small>{{item|Dryad|class=mirror}}</small>||<small>Likes Jungle</small>
+|<small>Dislikes Desert</small>
+|<small>None</small>
+|<small>{{item|Witch Doctor|class=mirror}} {{item|Truffle|class=mirror}}</small>
+|<small>{{item|Angler|class=mirror}} {{item|Zoologist|class=mirror}}</small> 
+|<small>{{item|Golfer|class=mirror}}</small> 
+|-
+|<small>{{item|Painter|class=mirror}}</small>||<small>Likes Jungle</small> 
+|<small>Dislikes Forest</small>
+|<small>{{item|Dryad|class=mirror}}</small>
+|<small>{{item|Party Girl|class=mirror}}</small>
+|<small>{{item|Truffle|class=mirror}} {{item|Cyborg|class=mirror}}</small>
+|<small>None</small>
+|-
+|<small>{{item|Witch Doctor|class=mirror}}</small>||<small>Likes Jungle</small>
+|<small>Dislikes Hallow</small>
+|<small>None</small>
+|<small>{{item|Dryad|class=mirror}} {{item|Guide|class=mirror}}</small>
+|<small>{{item|Nurse|class=mirror}}</small>
+|<small>{{item|Truffle|class=mirror}}</small>
+|-
+|<small>{{item|Stylist|class=mirror}}</small>||<small>Likes Ocean</small>
+|<small>Dislikes Snow</small>
+|<small>{{item|Dye Trader|class=mirror}}</small>
+|<small>{{item|Pirate|class=mirror}}</small>
+|<small>{{item|Tavernkeep|class=mirror}}</small>
+|<small>{{item|Goblin Tinkerer|class=mirror}}</small>
+|-
+|<small>{{item|Angler|class=mirror}}</small>||<small>Likes Ocean</small>
+|<small>Dislikes Desert</small>
+|<small>None</small>
+|<small>{{item|Demolitionist|class=mirror}}{{item|Party Girl|class=mirror}}{{item|Tax Collector|class=mirror}}</small>
+|<small>None</small>
+|<small>{{item|Tavernkeep|class=mirror}}</small>
+|-
+|<small>{{item|Pirate|class=mirror}}</small>||<small>Likes Ocean</small>
+|<small>Dislikes Underground</small>
+|<small>{{item|Angler|class=mirror}}</small>
+|<small>{{item|Tavernkeep|class=mirror}}</small>
+|<small>{{item|Stylist|class=mirror}}</small>
+|<small>{{item|Guide|class=mirror}}</small>
+|-
+|<small>{{item|Mechanic|class=mirror}}</small>||<small>Likes Snow</small>
+|<small>Dislikes Underground</small>
+|<small>{{item|Goblin Tinkerer|class=mirror}}</small>
+|<small>{{item|Cyborg|class=mirror}}</small>
+|<small>{{item|Arms Dealer|class=mirror}}</small>
+|<small>{{item|Clothier|class=mirror}}</small>
+|-
+|<small>{{item|Tax Collector|class=mirror}}</small>||<small>Likes Snow</small>
+|<small>Dislikes Hallow</small>
+|<small>{{item|Merchant|class=mirror}}</small>
+|<small>{{item|Party Girl|class=mirror}}</small>
+|<small>{{item|Demolitionist|class=mirror}}{{item|Mechanic|class=mirror}}</small>
+|<small>{{item|Santa Claus|class=mirror}}</small>
+|-
+|<small>{{item|Cyborg|class=mirror}}</small>||<small>Likes Snow</small> 
+|<small>Dislikes Jungle</small>
+|<small>None</small>
+|<small>{{item|Steampunker|class=mirror}} {{item|Pirate|class=mirror}}{{item|Stylist|class=mirror}}</small>
+|<small>{{item|Zoologist|class=mirror}}</small> 
+|<small>{{item|Wizard|class=mirror}}</small>
+|-
+|<small>{{item|Santa Claus|class=mirror}}</small>||<small>Loves Snow</small>
+|<small>Hates Desert</small>
+|<small>None</small>
+|<small>None</small>
+|<small>None</small>
+|<small>{{item|Tax Collector|class=mirror}}</small>
+|-
+|<small>{{item|Truffle|class=mirror}}</small>||<small>None (can only live in Mushroom)</small>
+|<small>None</small>
+|<small>{{item|Guide|class=mirror}}</small>
+|<small>{{item|Dryad|class=mirror}}</small>
+|<small>{{item|Clothier|class=mirror}}</small>
+|<small>{{item|Witch Doctor|class=mirror}}</small>
+|}
