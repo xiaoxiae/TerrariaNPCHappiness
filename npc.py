@@ -153,6 +153,10 @@ class NPC:
                 ):
                     happiness *= factor
 
+        # special case for Truffle, since he can only live in mushroom
+        if self.name == "Truffle" and biome != "Mushroom":
+            happiness = 1.5
+
         # Factors that make an NPC happy will lower its prices, down to a minimum of 75%.
         # Conversely, factors that make an NPC unhappy will raise its prices, up to a maximum of 150%.
         # The happiness rounds to 5% increments.
@@ -178,20 +182,47 @@ class NPC:
         return float("inf") if not was_within_pylon else total
 
 
-with open("in", "r") as f:
-    lines = f.read().splitlines()
+def read_lines() -> List[str]:
+    """Read the table from the 'in' file."""
+    with open("in", "r") as f:
+        lines = f.read().splitlines()
+
+        # skip lines till the actual NPC rows
+        lines = lines[13:]
+
+        # connect malformed lines (so they all start with a |)
+        i = 0
+        while i < len(lines):
+            if not lines[i].startswith("|"):
+                lines[i - 1] = lines.pop(i)
+            else:
+                i += 1
+
+        # disconnect on ||
+        i = 0
+        while i < len(lines):
+            if "||" in lines[i]:
+                lines.insert(i + 1, lines[i][lines[i].index("||") + 1 :])
+                lines[i] = lines[i][: lines[i].index("||")]
+            else:
+                i += 1
+
+    return lines
+
+
+lines = read_lines()
 
 # store NPCS in a dictionary by name
 npcs: List[NPC] = []
 for i in range(0, len(lines), 8):
     npcs.append(NPC(lines[i : i + 7]))
 
-# Taken from https://terraria.gamepedia.com/Pylons (since they're pretty much all that matters)
+# Taken from https://terraria.gamepedia.com/Pylons
 biomes = (
     "Forest",
     "Snow",
     "Desert",
-    "Underground",
+    "Underground",  # not Cave since Happiness table says 'Underground'
     "Ocean",
     "Jungle",
     "Hallow",
@@ -253,7 +284,7 @@ print(f"------------------------------------------")
 
 last_score = 0
 
-found_score = None 
+found_score = None
 found_file = None
 
 while len(queue) > 0:
