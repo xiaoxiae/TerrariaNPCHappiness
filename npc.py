@@ -166,20 +166,17 @@ class NPC:
     def get_group_happiness(self, biome: str, group: Sequence[NPC]):
         """Get the sum of how happy each of the NPC in a group is."""
         total = 0
-        was_within_pylon = False
 
         for npc in group:
             happiness = npc.get_happiness(biome, group)
 
-            if happiness <= 0.85:
-                was_within_pylon = True
-
-            if happiness >= 0.9:
+            # restrict only to groups of happiness <= 0.85 to speed up computation
+            if happiness > 0.85:
                 return float("+inf")
 
             total += happiness
 
-        return float("inf") if not was_within_pylon else total
+        return total
 
 
 def read_lines() -> List[str]:
@@ -242,18 +239,17 @@ class State:
     # the remaining NPCs
     remaining: Tuple[NPC]
 
-    def get_total_happiness(self):
-        """Return how happy all of these groups in this state are."""
-        total = 0
+    def __post_init__(self):
+        self.score = 0
 
         for biome, group in self.groups:
-            total += NPC.get_group_happiness(biome, group)
+            self.score += NPC.get_group_happiness(biome, group)
 
-        return total
+        self.score = round(self.score, 3)
 
     def __lt__(a, b):
-        """heapq"""
-        return False
+        """For heapq."""
+        return a.score < b.score
 
 
 def add_to_queue(state: State, max_k: Optional[int] = None):
@@ -273,7 +269,7 @@ def add_to_queue(state: State, max_k: Optional[int] = None):
 
         if best_biome is not None:
             new_state = State(state.groups + [(best_biome, group)], remaining)
-            heappush(queue, (round(new_state.get_total_happiness(), 3), new_state))
+            heappush(queue, new_state)
 
 
 add_to_queue(State([], npcs), 3)
@@ -288,15 +284,18 @@ found_score = None
 found_file = None
 
 while len(queue) > 0:
-    score, state = heappop(queue)
+    state = heappop(queue)
 
     if len(state.remaining) == 0:
         if found_score is None:
-            found_score = score
+            print("Optimal layout found! Writing to out.")
+
+            found_score = state.score
             found_file = open("out", "w")
 
-            found_file.write(f"Total happiness: {score}\n")
-            found_file.write(f"-----------------{'-' * len(str(score))}\n\n")
+            found_file.write(f"Total happiness: {found_score}\n")
+            found_file.write(f"Time elapsed: {formatted_time(time() - start_time)}\n")
+            found_file.write(f"-----------------{'-' * len(str(found_score))}\n\n")
 
         for biome, npcs in state.groups:
             found_file.write(biome + ":\n")
@@ -307,11 +306,13 @@ while len(queue) > 0:
             found_file.write("\n")
         found_file.write("------------\n\n")
 
-    if found_score is not None and found_score != score:
+    if found_score is not None and found_score != state.score:
         quit()
 
-    if score != last_score:
-        print(f"{formatted_time(time() - start_time)}\t{score}\t\t{len(queue)}")
-        last_score = score
+    if state.score != last_score:
+        print(f"{formatted_time(time() - start_time)}\t{state.score}\t\t{len(queue)}")
+        last_score = state.score
 
     add_to_queue(state)
+
+print("Optimal layout not found! This should not have happened :(.")
