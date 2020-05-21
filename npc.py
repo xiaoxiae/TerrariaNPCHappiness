@@ -1,14 +1,12 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import *
-from enum import Enum, auto
 from itertools import combinations
 from heapq import *
 
 from time import time
 from datetime import datetime
-
-from random import random
+from textwrap import fill
 
 start_time = time()
 
@@ -190,6 +188,11 @@ class NPC:
             happiness = npc.get_happiness(biome, group)
 
             # restrict only to groups of happiness <= 0.85 to speed up computation
+            # if no solution is found, increase (or somehow change) this limit to also
+            # include solutions that are not as good
+            #
+            # note that it is good to include one .85 NPC in each biome so they can
+            # sell the Pylon for that biome -- that's why the .85 solution
             if happiness > 0.85:
                 return float("+inf")
 
@@ -300,6 +303,7 @@ def add_to_heap(state: State, max_k: Optional[int] = None):
 add_to_heap(State([], npcs), 3)
 
 
+print(f"------------------------------------------")
 print(f"Time\t\tHappiness\tQueue size")
 print(f"------------------------------------------")
 
@@ -324,7 +328,8 @@ while len(heap) > 0:
     if len(state.remaining) == 0:
         if found_score is None:
             print(f"------------------------------------------")
-            print("Optimal layout found! Writing to out.")
+            print("Optimal layout found, writing to out.")
+            print(f"------------------------------------------")
 
             found_score = state.score
             found_file = open("out", "w")
@@ -344,5 +349,7 @@ while len(heap) > 0:
 
     add_to_heap(state)
 
-print(f"------------------------------------------")
-print("Optimal layout not found! This should not have happened :(.")
+if found_score is None:
+    print(f"------------------------------------------")
+    print(fill("Optimal layout not found. Please, loosen the restrictions the in NPC class (the *_restrictions variables and the conditions in the get_happiness method).", 42))
+    print(f"------------------------------------------")
