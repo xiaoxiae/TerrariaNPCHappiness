@@ -67,15 +67,18 @@ class NPC:
     )
 
     # custom restrictions on where certain NPCs should be
+    # see https://terraria.gamepedia.com/Biome-specific_items
     biome_restrictions = (
         ("Witch Doctor", "Jungle"),
         ("Truffle", "Mushroom"),
+        ("Santa Claus", "Snow"),
     )
 
     # custom restrictions on with whom should certain NPCs be
     npc_restrictions = (
         ("Angler", "Pirate"),
-        ("Steampunker", "Cyborg"),
+        ("Arms Dealer", "Nurse"),
+        ("Steampunker", "Cyborg", "Goblin Tinkerer"),
     )
 
     def __init__(self, lines: List[str]):
@@ -165,8 +168,9 @@ class NPC:
 
         for group in self.npc_restrictions:
             if self.name in group:
-                for npc in npcs:
-                    if npc.name not in group:
+                # each NPC from the group has to be in npcs
+                for npc in group:
+                    if not self.__npc_in_group(npc, npcs):
                         return 1.5
 
         # apply restrictions
@@ -178,6 +182,13 @@ class NPC:
         # Conversely, factors that make an NPC unhappy will raise its prices, up to a maximum of 150%.
         # The happiness rounds to 5% increments.
         return round(min(max(round_to_multiple(happiness, 0.05), 0.75), 1.5), 3)
+    
+
+    def __npc_in_group(self, n1, group):
+        for n2 in group:
+            if n1 == n2.name:
+                return True
+        return False
 
     @classmethod
     def get_group_happiness(self, biome: str, group: Sequence[NPC]):
@@ -300,7 +311,7 @@ def add_to_heap(state: State, max_k: Optional[int] = None):
             heappush(heap, new_state)
 
 
-add_to_heap(State([], npcs), 3)
+add_to_heap(State([], npcs), 4)
 
 
 print(f"------------------------------------------")
@@ -338,10 +349,10 @@ while len(heap) > 0:
             found_file.write(f"Time elapsed: {formatted_time(time() - start_time)}\n")
             found_file.write(f"-----------------{'-' * len(str(found_score))}\n\n")
 
-        for biomes, npcs in state.groups:
+        for biomes, npcs in sorted(state.groups, key=lambda e: e[0][0]):
             found_file.write(" or ".join(biomes) + ":\n")
 
-            for npc in sorted(npcs, key = lambda npc: npc.name):
+            for npc in sorted(npcs, key=lambda npc: npc.name):
                 found_file.write(f"- {npc.name} ({npc.get_happiness(biomes[0], npcs)})\n")
 
             found_file.write("\n")
