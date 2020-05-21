@@ -62,7 +62,7 @@ class NPC:
     emotion_factors = (
         ("Loves", 0.9),
         ("Likes", 0.95),
-        ("Dislikes", 1.5),
+        ("Dislikes", 1.05),
         ("Hates", 1.1),
     )
 

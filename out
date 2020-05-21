@@ -1,21 +1,21 @@
 Total happiness: 20.4
-Time elapsed: 00:00:47.59
+Time elapsed: 00:02:10.94
 ---------------------
 
 Forest:
-- Golfer (0.8)
-- Guide (0.85)
-- Zoologist (0.8)
-
-Forest:
 - Arms Dealer (0.8)
-- Merchant (0.85)
+- Guide (0.85)
 - Nurse (0.8)
 
-Jungle:
+Forest:
 - Demolitionist (0.8)
+- Merchant (0.85)
 - Tavernkeep (0.8)
+
+Jungle:
+- Golfer (0.85)
 - Witch Doctor (0.85)
+- Zoologist (0.75)
 
 Hallow:
 - Painter (0.85)
@@ -50,19 +50,19 @@ Ocean:
 ------------
 
 Forest:
-- Arms Dealer (0.8)
+- Golfer (0.8)
 - Guide (0.85)
-- Nurse (0.8)
+- Zoologist (0.8)
 
 Forest:
-- Demolitionist (0.8)
+- Arms Dealer (0.8)
 - Merchant (0.85)
-- Tavernkeep (0.8)
+- Nurse (0.8)
 
 Jungle:
-- Golfer (0.85)
+- Demolitionist (0.8)
+- Tavernkeep (0.8)
 - Witch Doctor (0.85)
-- Zoologist (0.75)
 
 Hallow:
 - Painter (0.85)
