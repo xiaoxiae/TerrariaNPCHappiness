@@ -245,7 +245,7 @@ biomes = (
     "Mushroom",
 )
 
-queue = []
+heap = []
 
 
 @dataclass
@@ -273,11 +273,12 @@ class State:
         return a.score < b.score
 
 
-def add_to_queue(state: State, max_k: Optional[int] = None):
-    """..."""
+def add_to_heap(state: State, max_k: Optional[int] = None):
+    """Add all possible groups from the remaining NPCs of a state to the heap."""
     for group, remaining in yield_groupings(
         state.remaining, 2, max_k or len(state.groups[-1][1])
     ):
+        # find the best biomes for the given group of NPCs
         best_biomes = []
         best_biomes_score = float("+inf")
 
@@ -290,12 +291,13 @@ def add_to_queue(state: State, max_k: Optional[int] = None):
             elif score == best_biomes_score:
                 best_biomes.append(biome)
 
+        # only add it if the score isn't infinite
         if best_biomes_score != float("+inf"):
             new_state = State(state.groups + [(best_biomes, group)], remaining)
-            heappush(queue, new_state)
+            heappush(heap, new_state)
 
 
-add_to_queue(State([], npcs), 3)
+add_to_heap(State([], npcs), 3)
 
 
 print(f"Time\t\tHappiness\tQueue size")
@@ -306,16 +308,19 @@ last_score = 0
 found_score = None
 found_file = None
 
-while len(queue) > 0:
-    state = heappop(queue)
+while len(heap) > 0:
+    state = heappop(heap)
 
+    # quit on change of score after the optimal state has been found
     if found_score is not None and found_score != state.score:
         quit()
 
+    # print messages on change of score
     if state.score != last_score:
-        print(f"{formatted_time(time() - start_time)}\t{state.score}\t\t{len(queue)}")
+        print(f"{formatted_time(time() - start_time)}\t{state.score}\t\t{len(heap)}")
         last_score = state.score
 
+    # print the optimal state when no NPCs remain to be grouped
     if len(state.remaining) == 0:
         if found_score is None:
             print(f"------------------------------------------")
@@ -331,13 +336,13 @@ while len(queue) > 0:
         for biomes, npcs in state.groups:
             found_file.write(" or ".join(biomes) + ":\n")
 
-            for npc in npcs:
+            for npc in sorted(npcs, key = lambda npc: npc.name):
                 found_file.write(f"- {npc.name} ({npc.get_happiness(biomes[0], npcs)})\n")
 
             found_file.write("\n")
         found_file.write("------------\n\n")
 
-    add_to_queue(state)
+    add_to_heap(state)
 
 print(f"------------------------------------------")
 print("Optimal layout not found! This should not have happened :(.")
