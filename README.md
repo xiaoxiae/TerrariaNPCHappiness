@@ -11,24 +11,23 @@ You can add certain biome and NPC restrictions by modifying the
 ## Contents
 The `in` file is [this table](https://terraria.gamepedia.com/index.php?title=NPCs&action=edit&section=11) from Terraria's Wiki -- this is where preferences are parsed from.
 
-The `out` file contains all of the resulting optimal layouts.
+The `out` file contains all of the resulting optimal layouts. One layout (that I find quite nice) looks like this:
 
-One layout could look like this:
 ```
 Forest:
-- Golfer (0.8)
-- Guide (0.85)
-- Zoologist (0.8)
-
-Forest:
 - Arms Dealer (0.8)
-- Merchant (0.85)
+- Guide (0.85)
 - Nurse (0.8)
 
-Jungle:
+Forest:
 - Demolitionist (0.8)
+- Merchant (0.85)
 - Tavernkeep (0.8)
+
+Jungle:
+- Golfer (0.85)
 - Witch Doctor (0.85)
+- Zoologist (0.75)
 
 Hallow:
 - Painter (0.85)
