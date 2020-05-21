@@ -68,6 +68,18 @@ class NPC:
         ("Hates", 1.1),
     )
 
+    # custom restrictions on where certain NPCs should be
+    biome_restrictions = (
+        ("Witch Doctor", "Jungle"),
+        ("Truffle", "Mushroom"),
+    )
+
+    # custom restrictions on with whom should certain NPCs be
+    npc_restrictions = (
+        ("Angler", "Pirate"),
+        ("Steampunker", "Cyborg"),
+    )
+
     def __init__(self, lines: List[str]):
         self.name = self.__parse_names(lines[0])[0]
 
@@ -153,9 +165,16 @@ class NPC:
                 ):
                     happiness *= factor
 
-        # special case for Truffle, since he can only live in mushroom
-        if self.name == "Truffle" and biome != "Mushroom":
-            happiness = 1.5
+        for group in self.npc_restrictions:
+            if self.name in group:
+                for npc in npcs:
+                    if npc.name not in group:
+                        return 1.5
+
+        # apply restrictions
+        for name, mandatory_biome in self.biome_restrictions:
+            if self.name == name and biome != mandatory_biome:
+                return 1.5
 
         # Factors that make an NPC happy will lower its prices, down to a minimum of 75%.
         # Conversely, factors that make an NPC unhappy will raise its prices, up to a maximum of 150%.
@@ -182,7 +201,7 @@ class NPC:
 def read_lines() -> List[str]:
     """Read the table from the 'in' file."""
     with open("in", "r") as f:
-        lines = f.read().splitlines()
+        lines = f.read().strip().splitlines()
 
         # skip lines till the actual NPC rows
         lines = lines[13:]
@@ -286,8 +305,16 @@ found_file = None
 while len(queue) > 0:
     state = heappop(queue)
 
+    if found_score is not None and found_score != state.score:
+        quit()
+
+    if state.score != last_score:
+        print(f"{formatted_time(time() - start_time)}\t{state.score}\t\t{len(queue)}")
+        last_score = state.score
+
     if len(state.remaining) == 0:
         if found_score is None:
+            print(f"------------------------------------------")
             print("Optimal layout found! Writing to out.")
 
             found_score = state.score
@@ -306,13 +333,7 @@ while len(queue) > 0:
             found_file.write("\n")
         found_file.write("------------\n\n")
 
-    if found_score is not None and found_score != state.score:
-        quit()
-
-    if state.score != last_score:
-        print(f"{formatted_time(time() - start_time)}\t{state.score}\t\t{len(queue)}")
-        last_score = state.score
-
     add_to_queue(state)
 
+print(f"------------------------------------------")
 print("Optimal layout not found! This should not have happened :(.")
