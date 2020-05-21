@@ -252,8 +252,9 @@ queue = []
 class State:
     """A given state of the algorithm."""
 
-    # a list of pre-set biome : NPC groups that each have a happiness level
-    groups: List[Tuple[str, Tuple[NPC]]]
+    # a list of pre-set (list of biomes) : (NPC groups) that each have a happiness level
+    # the biomes are equally good for the NPCs, that's why it's better to write 'em all
+    groups: List[Tuple[Tuple(str), Tuple[NPC]]]
 
     # the remaining NPCs
     remaining: Tuple[NPC]
@@ -261,8 +262,9 @@ class State:
     def __post_init__(self):
         self.score = 0
 
-        for biome, group in self.groups:
-            self.score += NPC.get_group_happiness(biome, group)
+        for biomes, group in self.groups:
+            # take any biome from the biomes
+            self.score += NPC.get_group_happiness(biomes[0], group)
 
         self.score = round(self.score, 3)
 
@@ -276,18 +278,20 @@ def add_to_queue(state: State, max_k: Optional[int] = None):
     for group, remaining in yield_groupings(
         state.remaining, 2, max_k or len(state.groups[-1][1])
     ):
-        best_biome = None
-        best_biome_score = float("+inf")
+        best_biomes = []
+        best_biomes_score = float("+inf")
 
         for biome in biomes:
             score = NPC.get_group_happiness(biome, group)
 
-            if score < best_biome_score:
-                best_biome = biome
-                best_biome_score = score
+            if score < best_biomes_score:
+                best_biomes = [biome]
+                best_biomes_score = score
+            elif score == best_biomes_score:
+                best_biomes.append(biome)
 
-        if best_biome is not None:
-            new_state = State(state.groups + [(best_biome, group)], remaining)
+        if best_biomes_score != float("+inf"):
+            new_state = State(state.groups + [(best_biomes, group)], remaining)
             heappush(queue, new_state)
 
 
@@ -324,11 +328,11 @@ while len(queue) > 0:
             found_file.write(f"Time elapsed: {formatted_time(time() - start_time)}\n")
             found_file.write(f"-----------------{'-' * len(str(found_score))}\n\n")
 
-        for biome, npcs in state.groups:
-            found_file.write(biome + ":\n")
+        for biomes, npcs in state.groups:
+            found_file.write(" or ".join(biomes) + ":\n")
 
             for npc in npcs:
-                found_file.write(f"- {npc.name} ({npc.get_happiness(biome, npcs)})\n")
+                found_file.write(f"- {npc.name} ({npc.get_happiness(biomes[0], npcs)})\n")
 
             found_file.write("\n")
         found_file.write("------------\n\n")
