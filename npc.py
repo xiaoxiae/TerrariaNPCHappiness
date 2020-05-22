@@ -73,23 +73,26 @@ class NPC:
 
     # restrictions on where certain NPCs should be
     # see https://terraria.gamepedia.com/Biome-specific_items
-    biome_restrictions = (
+    biome_restrictions: Tuple[Tuple[str, str]] = (
         ("Witch Doctor", "Jungle"),
         ("Truffle", "Mushroom"),
         ("Santa Claus", "Snow"),
     )
 
     # restrictions on with whom should certain NPCs be
-    npc_group_restrictions = (
+    npc_group_restrictions: Tuple[Tuple[str, str]] = (
         ("Angler", "Pirate"),
         ("Arms Dealer", "Nurse"),
         ("Steampunker", "Cyborg", "Goblin Tinkerer"),
     )
 
     # restrictions on minimum level of happiness for the given NPC
-    npc_happiness_restrictions = (
+    npc_happiness_restrictions: Tuple[Tuple[str, int]] = (
         ("Steampunker", 0.8),
     )
+
+    # npcs, whos happiness we don't care about (
+    ignored_npcs: Tuple[str] = ()
 
     def __init__(self, lines: List[str]):
         self.name = self.__parse_names(lines[0])[0]
@@ -215,6 +218,10 @@ class NPC:
         total = 0
 
         for npc in group:
+            # ignore ignored NPCs
+            if npc.name in self.ignored_npcs:
+                continue
+
             happiness = npc.get_happiness(biome, group)
 
             # restrict only to groups of happiness <= 0.85 to speed up computation
