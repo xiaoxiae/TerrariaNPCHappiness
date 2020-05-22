@@ -11,9 +11,11 @@ from textwrap import fill
 start_time = time()
 
 
-def round_to_multiple(number, multiple) -> int:
-    """Round a number to the nearest multiple"""
-    return multiple * round(number / multiple)
+def round_price(number) -> int:
+    """Round a number to the nearest multiple."""
+    multiple = 0.05
+
+    return round(multiple * round(number / multiple), 3)
 
 
 def formatted_time(seconds: int) -> str:
@@ -59,14 +61,17 @@ class NPC:
     biome_preferences: List[Preference]
     npc_preferences: List[Preference]
 
-    emotion_factors = (
+    EMOTION_FACTORS = (
         ("Loves", 0.9),
         ("Likes", 0.95),
         ("Dislikes", 1.05),
         ("Hates", 1.1),
     )
 
-    # custom restrictions on where certain NPCs should be
+    MIN_HAPPINESS = 0.75
+    MAX_HAPPINESS = 1.5
+
+    # restrictions on where certain NPCs should be
     # see https://terraria.gamepedia.com/Biome-specific_items
     biome_restrictions = (
         ("Witch Doctor", "Jungle"),
@@ -74,11 +79,16 @@ class NPC:
         ("Santa Claus", "Snow"),
     )
 
-    # custom restrictions on with whom should certain NPCs be
-    npc_restrictions = (
+    # restrictions on with whom should certain NPCs be
+    npc_group_restrictions = (
         ("Angler", "Pirate"),
         ("Arms Dealer", "Nurse"),
         ("Steampunker", "Cyborg", "Goblin Tinkerer"),
+    )
+
+    # restrictions on minimum level of happiness for the given NPC
+    npc_happiness_restrictions = (
+        ("Steampunker", 0.8),
     )
 
     def __init__(self, lines: List[str]):
@@ -154,7 +164,7 @@ class NPC:
         #              Liked NPC      ->  95%
         #              Disliked NPC   -> 150%
         #              Hated NPC      -> 110%
-        for emotion, factor in self.emotion_factors:
+        for emotion, factor in self.EMOTION_FACTORS:
             if self.__matches_preference(
                 Preference(emotion, biome), self.biome_preferences
             ):
@@ -166,25 +176,34 @@ class NPC:
                 ):
                     happiness *= factor
 
-        for group in self.npc_restrictions:
+        # apply restrictions
+        for group in self.npc_group_restrictions:
             if self.name in group:
                 # each NPC from the group has to be in npcs
                 for npc in group:
                     if not self.__npc_in_group(npc, npcs):
-                        return 1.5
+                        return self.MAX_HAPPINESS
 
-        # apply restrictions
         for name, mandatory_biome in self.biome_restrictions:
             if self.name == name and biome != mandatory_biome:
-                return 1.5
+                return self.MAX_HAPPINESS
 
         # Factors that make an NPC happy will lower its prices, down to a minimum of 75%.
         # Conversely, factors that make an NPC unhappy will raise its prices, up to a maximum of 150%.
         # The happiness rounds to 5% increments.
-        return round(min(max(round_to_multiple(happiness, 0.05), 0.75), 1.5), 3)
-    
+        # The rounding is
+        happiness = min(
+            max(round_price(happiness), self.MIN_HAPPINESS), self.MAX_HAPPINESS,
+        )
 
-    def __npc_in_group(self, n1, group):
+        for npc, maximum_happiness in self.npc_happiness_restrictions:
+            if self.name == npc and happiness > maximum_happiness:
+                return self.MAX_HAPPINESS
+
+        return happiness
+
+    def __npc_in_group(self, n1: str, group: Sequence[NPC]):
+        """Whet"""
         for n2 in group:
             if n1 == n2.name:
                 return True
@@ -353,7 +372,9 @@ while len(heap) > 0:
             found_file.write(" or ".join(biomes) + ":\n")
 
             for npc in sorted(npcs, key=lambda npc: npc.name):
-                found_file.write(f"- {npc.name} ({npc.get_happiness(biomes[0], npcs)})\n")
+                found_file.write(
+                    f"- {npc.name} ({npc.get_happiness(biomes[0], npcs)})\n"
+                )
 
             found_file.write("\n")
         found_file.write("------------\n\n")
@@ -362,5 +383,10 @@ while len(heap) > 0:
 
 if found_score is None:
     print(f"------------------------------------------")
-    print(fill("Optimal layout not found. Please, loosen the restrictions the in NPC class (the *_restrictions variables and the conditions in the get_happiness method).", 42))
+    print(
+        fill(
+            "Optimal layout not found. Please, loosen the restrictions the in NPC class (the *_restrictions variables and the conditions in the get_happiness method).",
+            42,
+        )
+    )
     print(f"------------------------------------------")
