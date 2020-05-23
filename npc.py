@@ -169,11 +169,11 @@ class NPC:
                 ):
                     happiness *= factor
 
-        for group in Restrictions.npc_group_restrictions:
-            if self.name in group:
+        for restricted_group in Restrictions.npc_group_restrictions:
+            if self.name in restricted_group:
                 # each NPC from the group has to be in npcs
-                for npc in group:
-                    if not self.__npc_in_group(npc, npcs):
+                for name in restricted_group:
+                    if not self.__name_in_group(name, npcs):
                         return self.max_happiness
 
         for name, mandatory_biome in Restrictions.biome_restrictions:
@@ -194,10 +194,10 @@ class NPC:
 
         return happiness
 
-    def __npc_in_group(self, n1: str, group: Sequence[NPC]):
-        """Whet"""
-        for n2 in group:
-            if n1 == n2.name:
+    def __name_in_group(self, name: str, group: Sequence[NPC]):
+        """Whether a NPC with a given name is in a group of NPCs."""
+        for npc in group:
+            if name == npc.name:
                 return True
         return False
 
@@ -341,9 +341,10 @@ while len(heap) > 0:
         print(f"{formatted_time(time() - start_time)}\t{state.score}\t\t{len(heap)}")
         last_score = state.score
 
+
     # print the optimal state when no NPCs remain to be grouped
     if len(state.remaining) == 0:
-        if not state.contains_all_biomes():
+        if not state.contains_all_biomes() and Restrictions.require_all_biomes:
             continue
 
         if found_score is None:
