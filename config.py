@@ -34,7 +34,7 @@ class Restrictions:
 
     # maximum happiness coefficient for the given NPC
     # if it's ever higher, the layout will be ignored
-    npc_happiness_restrictions: Tuple[Tuple[str, int]] = (("Steampunker", 0.8),)
+    npc_happiness_restrictions: Tuple[Tuple[str, int]] = ()
 
     # NPCs whos happiness can be any value
     # note: ignoring NPCs will make the program run significantly slower (it has to examine many additional layouts)
@@ -44,3 +44,10 @@ class Restrictions:
     # the maximum happiness coefficient that an NPCs must have
     # any layouts with an NPC having a higher happiness coefficient will be ignored
     maximum_happiness_coefficient = 0.85
+
+    # whether we want the NPC groups to cover all biomes, or some can be missing
+    require_all_biomes = True
+
+    # the minimum and maximum number of NPCs in a single group (inclusive)
+    min_group_size = 2
+    max_group_size = 3

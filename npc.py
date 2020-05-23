@@ -70,6 +70,17 @@ class NPC:
         ("Hates", 1.1),
     )
 
+    biomes = (
+        "Forest",
+        "Snow",
+        "Desert",
+        "Underground",
+        "Ocean",
+        "Jungle",
+        "Hallow",
+        "Mushroom",
+    )
+
     min_happiness: Final[int] = 0.75
     max_happiness: Final[int] = 1.5
 
@@ -245,18 +256,6 @@ npcs: List[NPC] = []
 for i in range(0, len(lines), 8):
     npcs.append(NPC(lines[i : i + 7]))
 
-# Taken from https://terraria.gamepedia.com/Pylons
-biomes = (
-    "Forest",
-    "Snow",
-    "Desert",
-    "Underground",
-    "Ocean",
-    "Jungle",
-    "Hallow",
-    "Mushroom",
-)
-
 heap = []
 
 
@@ -284,17 +283,26 @@ class State:
         """For heapq."""
         return a.score < b.score
 
+    def contains_all_biomes(self):
+        """Whether the state contains all biomes."""
+        biomes = set(NPC.biomes)
+
+        for biome, group in self.groups:
+            biomes -= set(biome)
+
+        return len(biomes) == 0
+
 
 def add_to_heap(state: State, max_k: Optional[int] = None):
     """Add all possible groups from the remaining NPCs of a state to the heap."""
     for group, remaining in yield_groupings(
-        state.remaining, 2, max_k or len(state.groups[-1][1])
+        state.remaining, Restrictions.min_group_size, max_k or len(state.groups[-1][1])
     ):
         # find the best biomes for the given group of NPCs
         best_biomes = []
         best_biomes_score = float("+inf")
 
-        for biome in biomes:
+        for biome in NPC.biomes:
             score = NPC.get_group_happiness(biome, group)
 
             if score < best_biomes_score:
@@ -309,7 +317,7 @@ def add_to_heap(state: State, max_k: Optional[int] = None):
             heappush(heap, new_state)
 
 
-add_to_heap(State([], npcs), 4)
+add_to_heap(State([], npcs), Restrictions.max_group_size)
 
 
 print("-" * Configuration.output_width)
@@ -335,6 +343,9 @@ while len(heap) > 0:
 
     # print the optimal state when no NPCs remain to be grouped
     if len(state.remaining) == 0:
+        if not state.contains_all_biomes():
+            continue
+
         if found_score is None:
             print("-" * Configuration.output_width)
             print("Optimal layout found, writing to out.")
