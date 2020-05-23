@@ -8,6 +8,8 @@ from time import time
 from datetime import datetime
 from textwrap import fill
 
+from config import Restrictions, Configuration
+
 start_time = time()
 
 
@@ -61,38 +63,15 @@ class NPC:
     biome_preferences: List[Preference]
     npc_preferences: List[Preference]
 
-    EMOTION_FACTORS = (
+    emotion_factors: Final[Tuple[str, int]] = (
         ("Loves", 0.9),
         ("Likes", 0.95),
         ("Dislikes", 1.05),
         ("Hates", 1.1),
     )
 
-    MIN_HAPPINESS = 0.75
-    MAX_HAPPINESS = 1.5
-
-    # restrictions on where certain NPCs should be
-    # see https://terraria.gamepedia.com/Biome-specific_items
-    biome_restrictions: Tuple[Tuple[str, str]] = (
-        ("Witch Doctor", "Jungle"),
-        ("Truffle", "Mushroom"),
-        ("Santa Claus", "Snow"),
-    )
-
-    # restrictions on with whom should certain NPCs be
-    npc_group_restrictions: Tuple[Tuple[str, str]] = (
-        ("Angler", "Pirate"),
-        ("Arms Dealer", "Nurse"),
-        ("Steampunker", "Cyborg", "Goblin Tinkerer"),
-    )
-
-    # restrictions on minimum level of happiness for the given NPC
-    npc_happiness_restrictions: Tuple[Tuple[str, int]] = (
-        ("Steampunker", 0.8),
-    )
-
-    # npcs, whos happiness we don't care about (
-    ignored_npcs: Tuple[str] = ()
+    min_happiness: Final[int] = 0.75
+    max_happiness: Final[int] = 1.5
 
     def __init__(self, lines: List[str]):
         self.name = self.__parse_names(lines[0])[0]
@@ -167,7 +146,7 @@ class NPC:
         #              Liked NPC      ->  95%
         #              Disliked NPC   -> 150%
         #              Hated NPC      -> 110%
-        for emotion, factor in self.EMOTION_FACTORS:
+        for emotion, factor in self.emotion_factors:
             if self.__matches_preference(
                 Preference(emotion, biome), self.biome_preferences
             ):
@@ -179,29 +158,28 @@ class NPC:
                 ):
                     happiness *= factor
 
-        # apply restrictions
-        for group in self.npc_group_restrictions:
+        for group in Restrictions.npc_group_restrictions:
             if self.name in group:
                 # each NPC from the group has to be in npcs
                 for npc in group:
                     if not self.__npc_in_group(npc, npcs):
-                        return self.MAX_HAPPINESS
+                        return self.max_happiness
 
-        for name, mandatory_biome in self.biome_restrictions:
+        for name, mandatory_biome in Restrictions.biome_restrictions:
             if self.name == name and biome != mandatory_biome:
-                return self.MAX_HAPPINESS
+                return self.max_happiness
 
         # Factors that make an NPC happy will lower its prices, down to a minimum of 75%.
         # Conversely, factors that make an NPC unhappy will raise its prices, up to a maximum of 150%.
         # The happiness rounds to 5% increments.
         # The rounding is
         happiness = min(
-            max(round_price(happiness), self.MIN_HAPPINESS), self.MAX_HAPPINESS,
+            max(round_price(happiness), self.min_happiness), self.max_happiness,
         )
 
-        for npc, maximum_happiness in self.npc_happiness_restrictions:
+        for npc, maximum_happiness in Restrictions.npc_happiness_restrictions:
             if self.name == npc and happiness > maximum_happiness:
-                return self.MAX_HAPPINESS
+                return self.max_happiness
 
         return happiness
 
@@ -219,18 +197,12 @@ class NPC:
 
         for npc in group:
             # ignore ignored NPCs
-            if npc.name in self.ignored_npcs:
+            if npc.name in Restrictions.ignored_npcs:
                 continue
 
             happiness = npc.get_happiness(biome, group)
 
-            # restrict only to groups of happiness <= 0.85 to speed up computation
-            # if no solution is found, increase (or somehow change) this limit to also
-            # include solutions that are not as good
-            #
-            # note that it is good to include one .85 NPC in each biome so they can
-            # sell the Pylon for that biome -- that's why the .85 solution
-            if happiness > 0.85:
+            if happiness > Restrictions.maximum_happiness_coefficient:
                 return float("+inf")
 
             total += happiness
@@ -278,7 +250,7 @@ biomes = (
     "Forest",
     "Snow",
     "Desert",
-    "Underground",  # not Cave since Happiness table says 'Underground'
+    "Underground",
     "Ocean",
     "Jungle",
     "Hallow",
@@ -340,9 +312,9 @@ def add_to_heap(state: State, max_k: Optional[int] = None):
 add_to_heap(State([], npcs), 4)
 
 
-print(f"------------------------------------------")
+print("-" * Configuration.output_width)
 print(f"Time\t\tHappiness\tQueue size")
-print(f"------------------------------------------")
+print("-" * Configuration.output_width)
 
 last_score = 0
 
@@ -364,9 +336,9 @@ while len(heap) > 0:
     # print the optimal state when no NPCs remain to be grouped
     if len(state.remaining) == 0:
         if found_score is None:
-            print(f"------------------------------------------")
+            print("-" * Configuration.output_width)
             print("Optimal layout found, writing to out.")
-            print(f"------------------------------------------")
+            print("-" * Configuration.output_width)
 
             found_score = state.score
             found_file = open("out", "w")
@@ -389,11 +361,11 @@ while len(heap) > 0:
     add_to_heap(state)
 
 if found_score is None:
-    print(f"------------------------------------------")
+    print("-" * Configuration.output_width)
     print(
         fill(
-            "Optimal layout not found. Please, loosen the restrictions the in NPC class (the *_restrictions variables and the conditions in the get_happiness method).",
-            42,
+            "Optimal layout not found. Try to loosen restrictions in config.py",
+            Configuration.output_width,
         )
     )
-    print(f"------------------------------------------")
+    print("-" * Configuration.output_width)
