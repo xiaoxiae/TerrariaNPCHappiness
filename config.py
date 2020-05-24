@@ -3,7 +3,6 @@ from typing import *
 
 
 @dataclass
-
 class Configuration:
     """A dataclass for storing other program configuration."""
 
@@ -37,7 +36,8 @@ class Restrictions:
     )
 
     # maximum happiness coefficient for the given NPC
-    # if it's ever higher, the layout will be ignored
+    # if it's ever higher, the given layout will be ignored
+    # example: npc_happiness_restrictions: Tuple[Tuple[str, int]] = (("Steampunker", 0.75),)
     npc_happiness_restrictions: Tuple[Tuple[str, int]] = ()
 
     # NPCs whos happiness can be any value
