@@ -10,6 +10,10 @@ class Configuration:
     # width of the terminal output
     output_width = 50
 
+    # input and output file names
+    input_file_name = "in"
+    output_file_name = "out"
+
 
 @dataclass
 class Restrictions:

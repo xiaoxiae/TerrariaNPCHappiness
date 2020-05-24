@@ -7,10 +7,13 @@ from heapq import *
 from time import time
 from datetime import datetime
 from textwrap import fill
+from os import path
+from sys import exit
 
 from config import Restrictions, Configuration
 
 start_time = time()
+current_dir = path.dirname(path.abspath(__file__))
 
 
 def round_price(number) -> int:
@@ -31,19 +34,21 @@ def formatted_time(seconds: int) -> str:
 
 
 def yield_groupings(l: List[Any], min_k: int, max_k: int) -> Tuple[Tuple[Any]]:
-    """Return a tuple of two elements:
-    1) combinations of l of size (min_k, max_k) that contain the first element of l
+    """Yield tuples of two elements:
+    1) combination from l of size from min_k to max_k (inclusive) that contain the first element of l
     2) the remaining elements"""
+    assert min_k >= 1
+    assert max_k >= min_k
+
     if len(l) == 0:
         return []
 
     for k in range(min_k, max_k + 1):
-        for c1 in combinations(l, k):
-            if l[0] not in c1:
+        for combination in combinations(l, k):
+            if l[0] not in combination:
                 continue
 
-            yield (c1, tuple(i for i in l if i not in c1))
-
+            yield (combination, tuple(i for i in l if i not in combination))
 
 @dataclass
 class Preference:
@@ -63,14 +68,24 @@ class NPC:
     biome_preferences: List[Preference]
     npc_preferences: List[Preference]
 
-    emotion_factors: Final[Tuple[str, int]] = (
+    # Located in a Loved biome    ->  90%
+    #              Liked biome    ->  95%
+    #              Disliked biome -> 150%
+    #              Hated biome    -> 110%
+    # For each     Loved NPC      ->  90%
+    #              Liked NPC      ->  95%
+    #              Disliked NPC   -> 150%
+    #              Hated NPC      -> 110%
+    emotion_factors: Final[Tuple[Tuple[str, int]]] = (
         ("Loves", 0.9),
         ("Likes", 0.95),
         ("Dislikes", 1.05),
         ("Hates", 1.1),
     )
 
-    biomes = (
+    # hard-coded from what I saw in the table
+    # TODO: do this automatically?
+    biomes: Final[Tuple[str]] = (
         "Forest",
         "Snow",
         "Desert",
@@ -104,7 +119,8 @@ class NPC:
         self.__add_npc_preference("Hates", lines[6])
 
     def __parse_names(self, name: str) -> Optional[List[str]]:
-        """|<small>{{item|Painter|class=mirror}}{{item|Zoologist|class=mirror}}</small> -> ["Painter", "Zoologist"]"""
+        """Turns |<small>{{item|Painter|class=mirror}}{{item|Zoologist|class=mirror}}</small>
+        Into ["Painter", "Zoologist"]."""
 
         names = []
         name = self.__strip_row(name)
@@ -119,7 +135,7 @@ class NPC:
         return names
 
     def __add_npc_preference(self, emotion: str, names: str):
-        """Adds a preference to the given"""
+        """Adds a preference to the given NPC from its string."""
         for name in self.__parse_names(names) or []:
             self.npc_preferences.append(Preference(emotion, name))
 
@@ -149,14 +165,6 @@ class NPC:
         if len(npcs) <= 3 and len(npcs) != 1:
             happiness *= 0.9
 
-        # Located in a Loved biome    ->  90%
-        #              Liked biome    ->  95%
-        #              Disliked biome -> 150%
-        #              Hated biome    -> 110%
-        # For each     Loved NPC      ->  90%
-        #              Liked NPC      ->  95%
-        #              Disliked NPC   -> 150%
-        #              Hated NPC      -> 110%
         for emotion, factor in self.emotion_factors:
             if self.__matches_preference(
                 Preference(emotion, biome), self.biome_preferences
@@ -221,9 +229,44 @@ class NPC:
         return total
 
 
-def read_lines() -> List[str]:
+@dataclass
+class State:
+    """A given state of the algorithm. This is what's stored in Dijkstra heap.
+    It contains a list of NPC groups that have already been put into a group and will
+    not change, and the remaining NPCs that are yet to be put into one."""
+
+    # a list of (biomes) : (NPCs) that each have some happiness level
+    groups: List[Tuple[Tuple(str), Tuple[NPC]]]
+
+    # the remaining NPCs that don't fit into any group (that groups will be create from)
+    remaining: Tuple[NPC]
+
+    def __post_init__(self):
+        self.score = 0
+
+        for biomes, group in self.groups:
+            # take any biome from the biomes
+            self.score += NPC.get_group_happiness(biomes[0], group)
+
+        self.score = round(self.score, 3)
+
+    def __lt__(self, other):
+        """For heapq."""
+        return self.score < other.score
+
+    def contains_all_biomes(self):
+        """Whether the state contains all biomes."""
+        remaining_biomes = set(NPC.biomes)
+
+        for biome, _ in self.groups:
+            remaining_biomes -= set(biome)
+
+        return len(remaining_biomes) == 0
+
+
+def parse_wiki_file(path: str) -> List[str]:
     """Read the table from the 'in' file."""
-    with open("in", "r") as f:
+    with open(path, "r") as f:
         lines = f.read().strip().splitlines()
 
         # skip lines till the actual NPC rows
@@ -246,51 +289,15 @@ def read_lines() -> List[str]:
             else:
                 i += 1
 
-    return lines
+    npcs: List[NPC] = []
+    for i in range(0, len(lines), 8):
+        npcs.append(NPC(lines[i : i + 7]))
+
+    return npcs
 
 
-lines = read_lines()
-
-# store NPCS in a dictionary by name
-npcs: List[NPC] = []
-for i in range(0, len(lines), 8):
-    npcs.append(NPC(lines[i : i + 7]))
-
+npcs = parse_wiki_file(path.join(current_dir, Configuration.input_file_name))
 heap = []
-
-
-@dataclass
-class State:
-    """A given state of the algorithm."""
-
-    # a list of pre-set (list of biomes) : (NPC groups) that each have a happiness level
-    # the biomes are equally good for the NPCs, that's why it's better to write 'em all
-    groups: List[Tuple[Tuple(str), Tuple[NPC]]]
-
-    # the remaining NPCs
-    remaining: Tuple[NPC]
-
-    def __post_init__(self):
-        self.score = 0
-
-        for biomes, group in self.groups:
-            # take any biome from the biomes
-            self.score += NPC.get_group_happiness(biomes[0], group)
-
-        self.score = round(self.score, 3)
-
-    def __lt__(a, b):
-        """For heapq."""
-        return a.score < b.score
-
-    def contains_all_biomes(self):
-        """Whether the state contains all biomes."""
-        biomes = set(NPC.biomes)
-
-        for biome, group in self.groups:
-            biomes -= set(biome)
-
-        return len(biomes) == 0
 
 
 def add_to_heap(state: State, max_k: Optional[int] = None):
@@ -321,7 +328,7 @@ add_to_heap(State([], npcs), Restrictions.max_group_size)
 
 
 print("-" * Configuration.output_width)
-print(f"Time\t\tHappiness\tQueue size")
+print("Time\t\tHappiness\tQueue size")
 print("-" * Configuration.output_width)
 
 last_score = 0
@@ -334,13 +341,12 @@ while len(heap) > 0:
 
     # quit on change of score after the optimal state has been found
     if found_score is not None and found_score != state.score:
-        quit()
+        exit()
 
     # print messages on change of score
     if state.score != last_score:
         print(f"{formatted_time(time() - start_time)}\t{state.score}\t\t{len(heap)}")
         last_score = state.score
-
 
     # print the optimal state when no NPCs remain to be grouped
     if len(state.remaining) == 0:
@@ -353,7 +359,9 @@ while len(heap) > 0:
             print("-" * Configuration.output_width)
 
             found_score = state.score
-            found_file = open("out", "w")
+            found_file = open(
+                path.join(current_dir, Configuration.output_file_name), "w"
+            )
 
             found_file.write(f"Total happiness: {found_score}\n")
             found_file.write(f"Time elapsed: {formatted_time(time() - start_time)}\n")
