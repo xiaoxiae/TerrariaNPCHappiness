@@ -1,4 +1,9 @@
 # Terraria NPC Happiness
+
+**IMPORTANT** [2020/05/25]: the code, at the moment, does not produce accurate numbers, due to the fact that Terraria's source code doesn't seem to correspond with what the NPC's Wikipedia page says. I'll try to remedy this in the upcomming days -- sorry!
+
+---
+
 The 1.4 Terraria update made it so that [NPCs have preferences](https://terraria.gamepedia.com/Happiness#Happiness) regarding their location, who they are near, etc. This script simulates the happiness of various groups of NPCs and finds the best possible layout for where they all should live (given the provided restrictions). It internally uses [Dijkstra](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) (and some smaller optimizations) to find the optimum.
 
 ## Running the program
