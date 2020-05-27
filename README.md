@@ -1,6 +1,8 @@
 # Terraria NPC Happiness
 
-**IMPORTANT** [2020/05/25]: the code, at the moment, does not produce accurate numbers, due to the fact that Terraria's source code doesn't seem to correspond with what the NPC's Wikipedia page says. I'll try to remedy this in the upcomming days -- sorry!
+[2020/05/25]: the code, at the moment, does not produce accurate numbers, due to the fact that Terraria's source code doesn't seem to correspond with what the NPC's Wikipedia page says. I'll try to remedy this in the upcomming days -- sorry!
+
+[2020/05/27]: all should be fixed now. The output looks a little different -- it is separated into a list of 'villages' in certain biomes, that contain 'houses' of NPCs.
 
 ---
 
@@ -16,59 +18,4 @@ You can add certain restrictions on NPC happiness, their biomes and some other t
 - [`in`](in) -- contains [this table](https://terraria.gamepedia.com/index.php?title=NPCs&action=edit&section=11) from Terraria's Wiki -- this is where preferences are parsed from. Will be updated should something on the website change.
 - [`out`](out) -- contains all of the resulting optimal layouts the program produced (currently contains best layouts, given whatever config specifies).
 - [`npc.py`](npc.py) -- main program logic.
-- [`config.py`](config.py) -- configuration file.
-
-## TLDR
-Given the following constraints:
-- Witch Doctor lives in the Jungle
-- Truffle lives in the Mushroom
-- Santa Claus lives in the Snow
-- Steampunker, Cyborg and Goblin Tinkerer live together
-
-I find this layout to be the best:
-```
-Desert:
-- Dye Trader (0.85)
-- Stylist (0.8)
-
-Forest:
-- Arms Dealer (0.8)
-- Guide (0.85)
-- Nurse (0.8)
-
-Forest:
-- Demolitionist (0.8)
-- Merchant (0.85)
-- Tavernkeep (0.8)
-
-Hallow:
-- Painter (0.85)
-- Party Girl (0.75)
-- Wizard (0.85)
-
-Jungle:
-- Golfer (0.85)
-- Witch Doctor (0.85)
-- Zoologist (0.75)
-
-Mushroom:
-- Dryad (0.85)
-- Truffle (0.85)
-
-Ocean:
-- Angler (0.85)
-- Pirate (0.75)
-
-Snow:
-- Clothier (0.85)
-- Tax Collector (0.85)
-
-Snow:
-- Mechanic (0.85)
-- Santa Claus (0.8)
-
-Underground:
-- Cyborg (0.85)
-- Goblin Tinkerer (0.85)
-- Steampunker (0.8)
-```
+- [`config.py`](config.py) -- configuration file. **Look here if you're interested in what the results look like.**
