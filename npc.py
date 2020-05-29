@@ -3,6 +3,8 @@ from dataclasses import dataclass
 from typing import *
 from itertools import combinations
 from heapq import *
+import os
+import psutil
 
 from time import time
 from datetime import datetime
@@ -14,6 +16,7 @@ from config import Restrictions, Configuration
 
 start_time = time()
 current_dir = path.dirname(path.abspath(__file__))
+process = psutil.Process(os.getpid())
 
 Biome = NewType("Biome", str)
 
@@ -385,6 +388,7 @@ def pet_order_perserved(selected: List[NPC], unselected: List[NPC]):
     pet_order = [pets.index(p) for p in (selected + unselected) if p in pets]
     return pet_order == sorted(pet_order)
 
+
 def add_to_heap(state: State, max_k: Optional[int] = None):
     """Add all possible groups from the remaining NPCs of a state to the heap."""
     for group, remaining in yield_groupings(
@@ -444,7 +448,7 @@ for i, npc in enumerate(npcs):
     print(i, npc.name)
 
 print("-" * Configuration.output_width)
-print("Time\t\tHappiness\tQueue size")
+print("Running Time\tHappiness\tMemory (%)\tHeap size")
 print("-" * Configuration.output_width)
 
 last_happiness = 0
@@ -461,8 +465,14 @@ while len(heap) > 0:
     # print messages on change of happiness
     if state.happiness != last_happiness:
         print(
-            f"{formatted_time(time() - start_time)}\t{state.happiness}\t\t{len(heap)}"
+            "{0}\t{1}\t\t{2}\t\t{3}".format(
+                formatted_time(time() - start_time),
+                state.happiness,
+                round(process.memory_percent(), 2),
+                len(heap),
+            )
         )
+
         last_happiness = state.happiness
 
     # print the optimal state when no NPCs remain to be grouped

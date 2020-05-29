@@ -7,7 +7,7 @@ class Configuration:
     """A dataclass for storing other program configuration."""
 
     # width of the terminal output
-    output_width = 50
+    output_width = 60
 
     # input and output file names
     input_file_name = "in"
