@@ -24,7 +24,6 @@ class Restrictions:
     biome_restrictions: Tuple[Tuple[str, str]] = (
         ("Witch Doctor", "Jungle"),
         ("Truffle", "Mushroom"),
-        ("Santa Claus", "Snow"),
     )
 
     # maximum happiness coefficient for the given NPC
@@ -34,11 +33,14 @@ class Restrictions:
 
     # NPCs that must share a house
     npc_houses: Tuple[Tuple[str, str]] = (
+        ("Pirate", "Angler"),
         ("Nurse", "Arms Dealer"),
+        ("Clothier", "Tax Collector"),
     )
 
     # NPCs whos happiness can be any value
-    # note: ignoring NPCs will make the program run significantly slower (it has to examine many additional layouts)
+    # note that ignoring NPCs will make the program run significantly slower, since
+    # it has to examine many additional layouts
     # example: ignored_npcs: Tuple[str] = ("Angler", "Guide")
     ignored_npcs: Tuple[str] = ()
 
@@ -46,10 +48,18 @@ class Restrictions:
     # currently useful for Santa, since he's not really around...
     excluded_npcs: Tuple[str] = ("Santa Claus",)
 
+    # the maximum happiness coefficient an NPC can have
+    maximum_npc_happiness: Tuple[Tuple[str, int]] = (("Steampunker", 0.75),)
+
     # the maximum happiness coefficient that an NPCs must have
     # any layouts with an NPC having a higher happiness coefficient will be ignored
-    maximum_happiness_coefficient = 0.85
+    # set to None if you wish to disable this restriction
+    maximum_happiness_coefficient: Optional[int] = 0.85
 
     # the minimum and maximum number of NPCs in a single group (inclusive)
-    min_group_size = 1
-    max_group_size = 3
+    min_group_size: int = 2
+    max_group_size: int = 3
+
+    # whether to enable pets (cat, dog, bunny) or not
+    # enabled will increase the time the program runs
+    enable_pets: bool = True
