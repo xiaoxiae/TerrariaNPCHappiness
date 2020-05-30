@@ -444,9 +444,6 @@ npcs = [npc for npc in npcs if npc.name not in Restrictions.excluded_npcs]
 
 add_to_heap(State([], npcs), Restrictions.max_group_size)
 
-for i, npc in enumerate(npcs):
-    print(i, npc.name)
-
 print("-" * Configuration.output_width)
 print("Running Time\tHappiness\tMemory (%)\tHeap size")
 print("-" * Configuration.output_width)
