@@ -8,7 +8,7 @@ import psutil
 
 from time import time
 from datetime import datetime
-from textwrap import fill
+from textwrap import TextWrapper
 from os import path
 from sys import exit
 
@@ -19,6 +19,10 @@ current_dir = path.dirname(path.abspath(__file__))
 process = psutil.Process(os.getpid())
 
 Biome = NewType("Biome", str)
+
+tw = TextWrapper()
+tw.subsequent_indent = "  "
+tw.width = Configuration.output_width
 
 
 def rounded_price(number: float) -> int:
@@ -111,6 +115,11 @@ class NPC:
     min_happiness: Final[int] = 0.75
     default_happiness: Final[int] = 1
     max_happiness: Final[int] = 1.5
+
+    def __str__(self):
+        return self.name
+
+    __repr__ = __str__
 
     def __init__(self, lines: Any[List[str], str]):
         # lines are either a list of strings (from file) or just the name of the NPC
@@ -474,6 +483,7 @@ while len(heap) > 0:
 
     # print the optimal state when no NPCs remain to be grouped
     if len(state.remaining) == 0:
+
         # first time finding an optimal state
         if found_happiness is None:
             print("-" * Configuration.output_width)
@@ -490,6 +500,12 @@ while len(heap) > 0:
 
             found_file.write(f"Total happiness: {found_happiness}\n")
             found_file.write(f"Time elapsed: {formatted_time(time() - start_time)}\n")
+
+            if Configuration.out_comment is not None:
+                found_file.write(
+                    tw.fill(f"Comment: {Configuration.out_comment}",) + "\n"
+                )
+
             found_file.write(f"-----------------{'-' * len(str(found_happiness))}\n\n")
 
         for i, village in enumerate(state):
@@ -511,10 +527,5 @@ while len(heap) > 0:
 
 if found_happiness is None:
     print("-" * Configuration.output_width)
-    print(
-        fill(
-            "Optimal layout not found. Try to loosen restrictions in config.py",
-            Configuration.output_width,
-        )
-    )
+    print(tw.fill("Optimal layout not found. Try to loosen restrictions in config.py",))
     print("-" * Configuration.output_width)

@@ -13,6 +13,9 @@ class Configuration:
     input_file_name = "in"
     output_file_name = "out"
 
+    # a comment that will be displayed on top of the output file
+    out_comment: Optional[str] = "Pets don't decrease the happiness with the current restrictions, they can be placed pretty much wherever."
+
 
 @dataclass
 class Restrictions:
@@ -49,7 +52,7 @@ class Restrictions:
     excluded_npcs: Tuple[str] = ("Santa Claus",)
 
     # the maximum happiness coefficient an NPC can have
-    maximum_npc_happiness: Tuple[Tuple[str, int]] = (("Steampunker", 0.75),)
+    maximum_npc_happiness: Tuple[Tuple[str, int]] = ()
 
     # the maximum happiness coefficient that an NPCs must have
     # any layouts with an NPC having a higher happiness coefficient will be ignored
@@ -62,4 +65,4 @@ class Restrictions:
 
     # whether to enable pets (cat, dog, bunny) or not
     # enabled will increase the time the program runs
-    enable_pets: bool = True
+    enable_pets: bool = False
