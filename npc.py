@@ -398,14 +398,12 @@ def pet_order_perserved(selected: List[NPC], unselected: List[NPC]):
     return pet_order == sorted(pet_order)
 
 
-def add_to_heap(state: State, max_k: Optional[int] = None):
+def add_to_heap(state: State):
     """Add all possible groups from the remaining NPCs of a state to the heap."""
     for group, remaining in yield_groupings(
-        state.remaining,
-        Restrictions.min_group_size,
-        max_k or len(state.villages[-1][-1]),
+        state.remaining, Restrictions.min_group_size, Restrictions.max_group_size,
     ):
-        if not pet_order_perserved(group, remaining):
+        if Restrictions.enable_pets and not pet_order_perserved(group, remaining):
             continue
 
         # previously added village
@@ -451,7 +449,7 @@ if Restrictions.enable_pets:
 # exclude NPCs
 npcs = [npc for npc in npcs if npc.name not in Restrictions.excluded_npcs]
 
-add_to_heap(State([], npcs), Restrictions.max_group_size)
+add_to_heap(State([], npcs))
 
 print("-" * Configuration.output_width)
 print("Running Time\tHappiness\tMemory (%)\tHeap size")
