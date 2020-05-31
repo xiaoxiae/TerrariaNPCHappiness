@@ -401,7 +401,7 @@ def pet_order_perserved(selected: List[NPC], unselected: List[NPC]):
 def add_to_heap(state: State):
     """Add all possible groups from the remaining NPCs of a state to the heap."""
     for group, remaining in yield_groupings(
-        state.remaining, Restrictions.min_group_size, Restrictions.max_group_size,
+        state.remaining, Restrictions.min_npcs_in_house, Restrictions.max_npcs_in_house,
     ):
         if Restrictions.enable_pets and not pet_order_perserved(group, remaining):
             continue

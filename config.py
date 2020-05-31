@@ -48,10 +48,11 @@ class Restrictions:
     ignored_npcs: Tuple[str] = ()
 
     # entirely exclude certain NPCs from the search
-    # currently useful for Santa, since he's not really around...
+    # useful for Santa, since he's not really around...
     excluded_npcs: Tuple[str] = ("Santa Claus",)
 
     # the maximum happiness coefficient an NPC can have
+    # example: maximum_npc_happiness: Tuple[Tuple[str, int]] = (("Steampunker", 0.75),)
     maximum_npc_happiness: Tuple[Tuple[str, int]] = ()
 
     # the maximum happiness coefficient that an NPCs must have
@@ -59,9 +60,9 @@ class Restrictions:
     # set to None if you wish to disable this restriction
     maximum_happiness_coefficient: Optional[int] = 0.85
 
-    # the minimum and maximum number of NPCs in a single group (inclusive)
-    min_group_size: int = 2
-    max_group_size: int = 3
+    # the minimum and maximum number of NPCs in a single house
+    min_npcs_in_house: int = 2
+    max_npcs_in_house: int = 2
 
     # whether to enable pets (cat, dog, bunny) or not
     # enabled will increase the time the program runs
