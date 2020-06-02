@@ -71,3 +71,6 @@ Village 10: (Ocean)
     Angler (0.85)
     Pirate (0.75)
 ```
+
+## Resources
+I used the [decompiled Terraria 1.4 source code](https://github.com/Pryaxis/Sources) to check how the happiness is actually implemented, since the Wiki was(/is) a little vague on the details.
